@@ -40,12 +40,16 @@ for index,row in data.iterrows():
     source = data.iloc[index+1:].copy()
     source['dif'] = source.nl.apply( lambda x :np.abs( x - target) ) 
 
-    print(target)
-    print(source)
-
     source['win'] = source.dif.apply( lambda x : len([ y for y in x if y != 0]) == 1 )
 
     if source.win.sum()>0:
         print('yay')
         break
+
+winner = source[source.win].dif.iloc[0]
+winner = 1 - winner/max(winner)
+
+wintext = ''.join( [x for x in row.id if x in winner] )
+
+source[source.win].iloc[0].id[0:15] + source[source.win].iloc[0].id[16:]
 

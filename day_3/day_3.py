@@ -12,42 +12,10 @@ data['all'] = data[0] + data[1]
 
 data = data[ ['all','id','x','y','w','h']]
 
-data['max_x'] = data.x + data.w
-data['max_y'] = data.y + data.h
+data['mat'] = data.id.apply( lambda x : np.zeros([1000,1000]) ) 
 
-data['mat'] = 0
+total = data.mat.sum()
 
-data['mat'] = data.id.apply( lambda x : np.zeros([data.max_x.max(), data.max_y.max()]) )
+sum(sum(total>1))
 
-def makeMat(row):
-    mat = row.mat
-    mat[ row.x:row.x+row.w, row.y:row.y+row.h] = 1
-    return mat
-
-
-data.mat = data.apply( lambda row : makeMat(row) )
-
-
-
-
-data['nl'] = data.id.apply( lambda x : np.array([ ord(char) - 96 for char in x ]))
-
-for index,row in data.iterrows():
-    print(index)
-    target = row.nl
-    source = data.iloc[index+1:].copy()
-    source['dif'] = source.nl.apply( lambda x :np.abs( x - target) ) 
-
-    source['win'] = source.dif.apply( lambda x : len([ y for y in x if y != 0]) == 1 )
-
-    if source.win.sum()>0:
-        print('yay')
-        break
-
-winner = source[source.win].dif.iloc[0]
-winner = 1 - winner/max(winner)
-
-wintext = ''.join( [x for x in row.id if x in winner] )
-
-source[source.win].iloc[0].id[0:15] + source[source.win].iloc[0].id[16:]
-
+data['overlap'] = data.apply( lambda row, total = total : total[ row.x:row.x +row.w, row.y:row.y + row.h].max()>1  , axis=1)

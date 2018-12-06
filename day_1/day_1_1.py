@@ -10,11 +10,15 @@ past['f'] = past.csum.apply( lambda y : past[past.csum == y].ind.iloc[0]).astype
 
 matches = pd.DataFrame()
 i=0
+
 while matches.size == 0:
     print(i)
     last = past.csum.iloc[-1]
     new = x.copy()
     new.csum += last
+
+    nmin = new.csum.min()
+    nmax = new.csum.max()
 
     new['ind'] = new.index + past.shape[0]
 
@@ -24,5 +28,5 @@ while matches.size == 0:
     matches = current[ current.ind != current.f]
     past = current
     i+=1
-
+    print(nmin, nmax)
 print(matches)
